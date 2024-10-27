@@ -1,4 +1,4 @@
-# 🚁 Advanced Autonomous Drone Control System
+# 🚗 Smart Ground Vehicle Navigation System
 ![Drone Control Banner](https://via.placeholder.com/1200x300?text=Autonomous+Drone+Control+System)
 
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/downloads/)
