@@ -49,7 +49,7 @@ graph LR
     B --> C[Navigation Module]
     B --> D[Velocity Module]
     B --> E[Safety Module]
-    C --> F[Drone]
+    C --> F[Rover]
     D --> F
     E --> F
     style F fill:#f96,stroke:#333,stroke-width:4px
