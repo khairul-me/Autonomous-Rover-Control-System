@@ -309,7 +309,7 @@ graph LR
 
 ## 📜 License
 
-Copyright © 2024 [Your Name]
+Copyright © 2024 [Khairul Islam]
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -324,8 +324,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
     
-**Made with ❤️ by [Your Name]**
+**Made with ❤️ by [Khairul Islam]**
 
-[Website](https://yourwebsite.com) · [Twitter](https://twitter.com/yourusername) · [LinkedIn](https://linkedin.com/in/yourusername)
+· [LinkedIn](https://www.linkedin.com/in/khairul7/)
 
 </div>
