@@ -87,6 +87,12 @@ graph TD
     F[JeVois API] --> A
     G[NumPy] --> A
 ```
+### Component interaction diagram:
+![image](https://github.com/user-attachments/assets/9248b456-f676-4baa-9885-0beda8ffb22c)
+ 
+### Diagram for the precision landing sequence:
+![image](https://github.com/user-attachments/assets/98e112cc-6c33-4759-9277-878eefb0eb6a)
+
 
 ### Key Features:
 1. **RTK GPS Navigation**
