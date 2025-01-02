@@ -1,331 +1,212 @@
-# 🚗 Smart Ground Vehicle Navigation System
-![Drone Control Banner](https://via.placeholder.com/1200x300?text=Autonomous+Drone+Control+System)
+# Autonomous Rover Control System
 
-[![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/downloads/)
-[![DroneKit Version](https://img.shields.io/badge/DroneKit-2.9.2-green.svg)](https://dronekit-python.readthedocs.io/)
-[![MAVLink](https://img.shields.io/badge/MAVLink-2.0-red.svg)](https://mavlink.io/en/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Documentation](https://img.shields.io/badge/docs-passing-brightgreen.svg)](docs/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+## Overview
+This project implements a comprehensive autonomous rover control system using RTK GPS for precise navigation, computer vision for precision operations, and various control modes for flexible operation. The system is built on ArduPilot and uses DroneKit-Python for autonomous control.
 
-> A professional-grade autonomous drone control system featuring advanced waypoint navigation and precise velocity control capabilities, built on DroneKit and MAVLink protocols.
+## Table of Contents
+- [System Architecture](#system-architecture)
+- [Hardware Components](#hardware-components)
+- [Software Stack](#software-stack)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Control Modes](#control-modes)
+- [Code Examples](#code-examples)
+- [Contributing](#contributing)
+- [License](#license)
 
-## 📑 Table of Contents
-- [Key Features](#-key-features)
-- [System Architecture](#-system-architecture)
-- [Quick Start](#-quick-start)
-- [Detailed Documentation](#-detailed-documentation)
-- [Control Modes](#-control-modes)
-- [Safety Systems](#-safety-systems)
-- [Performance Metrics](#-performance-metrics)
-- [Configuration Guide](#-configuration-guide)
-- [Contributing](#-contributing)
-- [Support & Community](#-support--community)
+## System Architecture
 
-## 🌟 Key Features
-
-### Core Capabilities
-- **Precision Waypoint Navigation**
-  - GPS-guided autonomous flight
-  - Dynamic waypoint adjustment
-  - Altitude hold capability
-  - Return-to-Launch (RTL) functionality
-
-- **Advanced Velocity Control**
-  - Local NED frame control
-  - Global NED frame control
-  - Precise movement patterns
-  - Velocity-based maneuvering
-
-- **Intelligent Safety Systems**
-  - Pre-flight diagnostics
-  - Real-time monitoring
-  - Failsafe mechanisms
-  - Emergency protocols
-
-```mermaid
-graph LR
-    A[Ground Station] --> B[Control System]
-    B --> C[Navigation Module]
-    B --> D[Velocity Module]
-    B --> E[Safety Module]
-    C --> F[Rover]
-    D --> F
-    E --> F
-    style F fill:#f96,stroke:#333,stroke-width:4px
-```
-
-## 🏗 System Architecture
-
-### Comprehensive System Overview
 ```mermaid
 graph TD
-    subgraph Ground Control
-        A[User Interface] --> B[Command Center]
-        B --> C[Mission Planner]
-    end
+    A[Raspberry Pi] --> B[Pixhawk]
+    B --> C[RTK GPS]
+    B --> D[Servos]
+    B --> E[Motors]
+    A --> F[JeVois Camera]
+    G[Base Station] --RTCM--> C
+    A --> H[Telemetry]
     
-    subgraph Control Systems
-        D[DroneKit Interface] --> E[MAVLink Protocol]
-        E --> F[Flight Controller]
+    subgraph Control System
+        I[DroneKit] --> J[MAVLink]
+        J --> B
     end
     
     subgraph Navigation
-        G[GPS Module] --> H[Waypoint Manager]
-        I[Velocity Controller] --> J[Movement Executor]
+        K[Waypoint Navigation]
+        L[Velocity Control]
+        M[Precision Landing]
     end
-    
-    subgraph Safety
-        K[Pre-flight Checks]
-        L[Runtime Monitor]
-        M[Emergency Handler]
-    end
-    
-    C --> D
-    F --> G
-    F --> I
-    F --> K
 ```
 
-### Data Flow Architecture
+## Hardware Components
+
+### Required Components:
+1. **Main Controller**
+   - Raspberry Pi (3B+ or newer)
+   - Pixhawk Flight Controller
+
+2. **Navigation System**
+   - RTK GPS Module
+   - GPS Base Station
+   - Radio Telemetry Set
+
+3. **Motion Control**
+   - Brushed ESC
+   - Steering Servo
+   - Drive Motors
+
+4. **Vision System**
+   - JeVois Smart Camera
+   - Camera Mount
+
+### Hardware Setup Diagram
+
 ```mermaid
-sequenceDiagram
-    participant User
-    participant Control
-    participant Navigation
-    participant Safety
-    participant Drone
-
-    User->>Control: Initialize Mission
-    Control->>Safety: Run Pre-flight Checks
-    Safety-->>Control: Status Confirmed
-    Control->>Navigation: Begin Mission
-    
-    loop Mission Execution
-        Navigation->>Drone: Send Commands
-        Drone-->>Safety: Status Updates
-        Safety->>Control: Monitor Health
-        Control->>User: Update Progress
-    end
+graph LR
+    A[Power Module] --> B[Pixhawk]
+    B --> C[ESC]
+    C --> D[Motors]
+    B --> E[Servo]
+    F[RTK GPS] --> B
+    G[Telemetry] --> B
+    H[Raspberry Pi] --> B
+    I[JeVois Camera] --> H
 ```
 
-## 🚀 Quick Start
+## Software Stack
 
-### 1. System Requirements
+### Core Components
+
+```mermaid
+graph TD
+    A[Python Scripts] --> B[DroneKit-Python]
+    B --> C[MAVLink]
+    C --> D[Pixhawk/ArduPilot]
+    E[OpenCV] --> A
+    F[JeVois API] --> A
+    G[NumPy] --> A
+```
+
+### Key Features:
+1. **RTK GPS Navigation**
+   - Centimeter-level positioning accuracy
+   - Real-time RTCM corrections
+   - Base station integration
+
+2. **Autonomous Control**
+   - Waypoint navigation
+   - Velocity-based movement
+   - Return to Launch (RTL)
+
+3. **Vision Processing**
+   - ArUco marker detection
+   - Precision landing capabilities
+   - Real-time position estimation
+
+## Installation
+
+1. **System Requirements**
 ```bash
-# Hardware Requirements
-- Drone with Pixhawk/APM flight controller
-- GPS module
-- Telemetry radio
-- Ground control station
+# Update system
+sudo apt-get update && sudo apt-get upgrade
 
-# Software Requirements
-- Python 3.7+
-- DroneKit 2.9.2+
-- MAVLink 2.0
+# Install Python dependencies
+pip install dronekit pymavlink numpy opencv-python
 ```
 
-### 2. Installation
+2. **Clone Repository**
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/advanced-drone-control.git
-cd advanced-drone-control
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-.\venv\Scripts\activate   # Windows
-
-# Install dependencies
-pip install -r requirements.txt
+git clone https://github.com/yourusername/autonomous-rover.git
+cd autonomous-rover
 ```
 
-### 3. Basic Usage
-```python
-# Waypoint Navigation Example
-python AutonomousDroneNavigator.py --connect 127.0.0.1:14550
+3. **Setup RTK Base Station**
+- Configure RTCM message output
+- Set up radio link with rover
+- Calibrate GPS position
 
-# Velocity Control Example
-python AutonomousDroneVelocity.py --connect 127.0.0.1:14550
+## Usage
+
+### Basic Operation
+1. Start the base station:
+```bash
+# Start RTCM corrections
+./start_base_station.sh
 ```
 
-## 📚 Detailed Documentation
-
-### Control System Components
+2. Launch the rover control script:
 ```python
-# Core Components Structure
-├── Navigation/
-│   ├── waypoint_manager.py
-│   ├── position_estimator.py
-│   └── path_planner.py
-├── Control/
-│   ├── velocity_controller.py
-│   ├── attitude_controller.py
-│   └── movement_executor.py
-├── Safety/
-│   ├── preflight_checks.py
-│   ├── monitoring.py
-│   └── emergency_handler.py
-└── Utils/
-    ├── connection_manager.py
-    └── data_logger.py
+python rover_control.py --connect /dev/ttyUSB0
 ```
 
-### Key Code Examples
+### Control Modes
 
-#### Waypoint Navigation
-```python
-def navigate_to_waypoint(latitude, longitude, altitude):
-    """
-    Navigate to specified waypoint with position validation
+```mermaid
+stateDiagram-v2
+    [*] --> MANUAL
+    MANUAL --> GUIDED
+    GUIDED --> AUTO
+    AUTO --> RTL
+    GUIDED --> RTL
+    RTL --> [*]
     
-    Args:
-        latitude (float): Target latitude
-        longitude (float): Target longitude
-        altitude (float): Target altitude in meters
-        
-    Returns:
-        bool: Success status
-    """
-    target = LocationGlobalRelative(latitude, longitude, altitude)
-    vehicle.simple_goto(target)
-    
-    return monitor_navigation_progress(target)
+    note right of MANUAL : Direct RC control
+    note right of GUIDED : Script control
+    note right of AUTO : Mission execution
+    note right of RTL : Return to launch
 ```
 
-#### Velocity Control
+### Main Control Functions
+
 ```python
-def set_velocity_ned(velocity_north, velocity_east, velocity_down):
-    """
-    Set velocity using NED coordinate frame
-    
-    Args:
-        velocity_north (float): Velocity in North direction (m/s)
-        velocity_east (float): Velocity in East direction (m/s)
-        velocity_down (float): Velocity in Down direction (m/s)
-    """
-    msg = vehicle.message_factory.set_position_target_local_ned_encode(
-        0,0,0,mavutil.mavlink.MAV_FRAME_LOCAL_NED,
-        0b0000111111000111,
-        0,0,0,velocity_north, velocity_east, velocity_down,
-        0,0,0,0,0)
+def goto_position(lat, lon, alt):
+    """Navigate to specific GPS coordinates"""
+    point = LocationGlobalRelative(lat, lon, alt)
+    vehicle.simple_goto(point)
+
+def set_velocity(vx, vy, vz):
+    """Control velocity in local NED frame"""
+    msg = vehicle.message_factory.set_position_target_local_ned_encode(...)
     vehicle.send_mavlink(msg)
 ```
 
-## 🎮 Control Modes
+## Code Structure
 
-### Available Flight Modes
-| Mode | Description | Use Case | Safety Level |
-|------|-------------|----------|--------------|
-| GUIDED | Autonomous navigation | Waypoint missions | High |
-| VELOCITY | Direct velocity control | Precise movements | Medium |
-| RTL | Return to launch | Emergency return | Very High |
-| MANUAL | Direct pilot control | Emergency override | Medium |
+### Core Modules
+1. `connection_test.py`: Vehicle connection and basic checks
+2. `rover_location_based_movement.py`: GPS waypoint navigation
+3. `rover_velocity_based_movement.py`: Velocity control
+4. `precision_landing_jevois.py`: Vision-based landing
 
-## 🛡 Safety Systems
+### Example Mission
 
-### Multi-Layer Safety Architecture
-```mermaid
-graph TD
-    A[Safety System] --> B[Pre-flight]
-    A --> C[In-flight]
-    A --> D[Emergency]
-    
-    B --> E[System Checks]
-    B --> F[Environment Checks]
-    
-    C --> G[Position Monitoring]
-    C --> H[Battery Monitoring]
-    
-    D --> I[RTL Protocol]
-    D --> J[Emergency Landing]
-```
-
-## 📊 Performance Metrics
-
-### Navigation Accuracy
-| Metric | Performance | Conditions |
-|--------|-------------|------------|
-| Position Hold | ±1.5m | Good GPS |
-| Waypoint Accuracy | ±2m | Clear sky |
-| Velocity Control | ±0.1 m/s | Stable conditions |
-
-### System Response Times
-| Operation | Response Time | Notes |
-|-----------|--------------|-------|
-| Command Processing | <100ms | Direct commands |
-| Emergency Stop | <500ms | All conditions |
-| Mode Switch | <200ms | All modes |
-
-## ⚙️ Configuration Guide
-
-### Key Parameters
 ```python
-# config.py
-NAVIGATION_SETTINGS = {
-    'DEFAULT_ALTITUDE': 10,  # meters
-    'WAYPOINT_ACCEPTANCE_RADIUS': 1,  # meters
-    'MAX_GROUNDSPEED': 15,  # m/s
-    'RTL_ALTITUDE': 20,  # meters
-}
+# Initialize vehicle
+vehicle = connectMyCopter()
+arm()
 
-SAFETY_SETTINGS = {
-    'MIN_BATTERY': 20,  # percentage
-    'MAX_DISTANCE': 1000,  # meters
-    'FAILSAFE_TIMEOUT': 5,  # seconds
-}
+# Execute waypoint mission
+waypoints = [
+    LocationGlobalRelative(36.00550, -95.86124, 10),
+    LocationGlobalRelative(36.00607, -95.86107, 10),
+    LocationGlobalRelative(36.00604, -95.86037, 10)
+]
+
+for waypoint in waypoints:
+    goto_position(waypoint)
+
+# Return home
+vehicle.mode = VehicleMode("RTL")
 ```
 
-## 🤝 Contributing
+## Contributing
+Contributions are welcome! Please read our contributing guidelines and submit pull requests to our repository.
 
-We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-### Development Flow
-```mermaid
-graph LR
-    A[Fork] -->B[Branch]
-    B --> C[Develop]
-    C --> D[Test]
-    D --> E[PR]
-    E --> F[Review]
-    F --> G[Merge]
-```
-
-## 🌐 Support & Community
-
-- 📫 [Report Issues](https://github.com/yourusername/advanced-drone-control/issues)
-- 💬 [Join Discussion](https://github.com/yourusername/advanced-drone-control/discussions)
-- 📱 [Discord Community](https://discord.gg/yourdronecommunity)
-
-## 📈 Future Roadmap
-
-### Planned Features
-- [ ] Advanced obstacle avoidance
-- [ ] Machine learning integration
-- [ ] Swarm control capabilities
-- [ ] Enhanced mission planning
-- [ ] Weather-aware navigation
-- [ ] Advanced failsafe mechanisms
-
-## 📜 License
-
-Copyright © 2024 [Khairul Islam]
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- DroneKit Development Team
-- ArduPilot Community
-- MAVLink Protocol Developers
-- Open Source Contributors
-
----
-
-<div align="center">
-    
-**Made with ❤️ by [Khairul Islam]**
-
-· [LinkedIn](https://www.linkedin.com/in/khairul7/)
-
-</div>
+## Contact
+Developer: Md Khairul Islam
+Institution: Hobart and William Smith Colleges
+Email: khairul.islam@hws.edu
