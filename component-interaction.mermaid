@@ -1,0 +1,28 @@
+graph TB
+    subgraph Control System
+        A[Raspberry Pi Controller] --> B[DroneKit]
+        B --> C[MAVLink]
+        C --> D[Pixhawk]
+    end
+
+    subgraph Navigation
+        E[RTK Base Station] --> F[RTK GPS]
+        F --> D
+    end
+
+    subgraph Vision
+        G[JeVois Camera] --> H[OpenCV]
+        H --> A
+    end
+
+    subgraph Motion
+        D --> I[ESC]
+        D --> J[Servos]
+        I --> K[Motors]
+        J --> L[Steering]
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+    style G fill:#fbf,stroke:#333,stroke-width:2px

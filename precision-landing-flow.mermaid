@@ -1,0 +1,19 @@
+stateDiagram-v2
+    [*] --> Initialize
+    Initialize --> SearchMarker
+    SearchMarker --> MarkerDetected
+    SearchMarker --> NoMarker
+    NoMarker --> SearchMarker
+    MarkerDetected --> CalculatePosition
+    CalculatePosition --> UpdateMovement
+    UpdateMovement --> CheckDistance
+    CheckDistance --> SearchMarker: Distance > Threshold
+    CheckDistance --> FinalApproach: Distance <= Threshold
+    FinalApproach --> Land
+    Land --> [*]
+
+    note right of Initialize : Setup camera & vehicle
+    note right of SearchMarker : Process camera feed
+    note right of CalculatePosition : Convert pixel to position
+    note right of UpdateMovement : Send landing_target msg
+    note right of FinalApproach : Precision movements
